@@ -1,0 +1,42 @@
+MainWidget:
+
+<BfHoriStitchWidget>:
+    canvas:
+        Line:
+            width: 1
+    RelativeLayout:
+        Label:
+            text: "XY"
+            font_size: 14
+
+
+<SiftVertStitchWidget>:
+    canvas:
+        Line:
+            width: 1
+    RelativeLayout:
+        Label:
+            text: "Z"
+            font_size: 14
+
+<ExportImageWidget>:
+    RelativeLayout:
+        Label:
+            text: "Export Images"
+            font_size: 14
+
+
+<MainWidget>:
+    BoxLayout:
+        orientation: "vertical"
+        spacing: "10dp"
+        BfHoriStitchWidget:
+            size_hint: 1,0.3
+        SiftVertStitchWidget:
+            size_hint: 1,0.3
+        ExportImageWidget:
+            size_hint: 1,0.3
+    
+        
+    
+    
