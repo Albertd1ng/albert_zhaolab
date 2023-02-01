@@ -85,6 +85,8 @@ def get_2img_border_after_shift(dim_elem_num, voxel_border, xyz_shift):
     None -
         if the two tiles don't have overlapped area after shift.
     '''
+    if voxel_border.shape[0]==0:
+        return np.array([])
     border = voxel_border.astype('int64')  # crucial step
     border_after_shift = np.zeros((2, 6), dtype='uint32')
     for i in range(3):

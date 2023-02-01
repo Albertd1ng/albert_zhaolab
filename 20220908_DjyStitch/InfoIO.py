@@ -314,22 +314,13 @@ def save_img_info_vert_stit(layer_num,save_path,tile_pos,axis_range,first_last_i
     np.save(save_path + r'\axis_range_zstitch_%.4d.npy' % (layer_num), axis_range)
     np.save(save_path + r'\first_last_index_zstitch_%.4d.npy' % (layer_num), first_last_index)
 
-# def save_img_info_Z_stit(save_path, dim_elem_num, voxel_len):
-#     r'''
-#     Save neccesary information of one layer in .npy file for subsequent Z stitch.
-#
-#     Parameters
-#     ----------
-#     layer_num - int
-#     save_path - str
-#     dim_elem_num - vector, unit32, (3)
-#         the quantity of voxels for each dimension.
-#     voxel_len - vector, float64, (3)
-#         the length of each dimension for a voxel.
-#
-#     Examples
-#     ----------
-#     >>>save_img_info_Z_stitch(r'C:\Users\dingj\20220902_BfHoriSiftVertStitch',dim_elem_num,voxel_len)
-#     '''
-#     np.save(save_path + r'\dim_elem_num.npy', dim_elem_num)
-#     np.save(save_path + r'\voxel_len.npy', voxel_len)
+def save_img_info_vert_stit_merged(layer_num,save_path,dim_elem_num,axis_range,first_last_index):
+    np.save(save_path + r'\dim_elem_num_zstitch_%.4d' % (layer_num), dim_elem_num)
+    np.save(save_path + r'\axis_range_zstitch_%.4d' % (layer_num), axis_range)
+    np.save(save_path + r'\first_last_index_zstitch_%.4d' % (layer_num), first_last_index)
+
+def get_img_info_vert_stit_merged(layer_num,save_path):
+    dim_elem_num=np.save(save_path + r'\dim_elem_num_zstitch_%.4d' % (layer_num))
+    axis_range=np.save(save_path + r'\axis_range_zstitch_%.4d' % (layer_num))
+    first_last_index=np.save(save_path + r'\first_last_index_zstitch_%.4d' % (layer_num))
+    return dim_elem_num,axis_range,first_last_index

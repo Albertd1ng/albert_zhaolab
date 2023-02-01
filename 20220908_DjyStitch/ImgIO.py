@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
-from AxisRange import calc_max_axis_range_vert
-from InfoIO import get_img_npy_basic_info,get_img_info_vert_stit,get_img_info_hori_stit
+import os
+from AxisRange import calc_max_axis_range_vert,calc_max_axis_range_vert_merged
+from InfoIO import get_img_npy_basic_info,get_img_info_vert_stit,get_img_info_hori_stit,get_img_info_vert_stit_merged
 
 
 def import_img(path_format, img_path, img_name, ordinal, channel_ordinal, dim_elem_num,
@@ -154,8 +155,8 @@ def import_whole_img(z_index, path_format, img_path, img_name, channel_ordinal,
         whole_img[y_th:y_th + dim_elem_num[1], x_th:x_th + dim_elem_num[0]] = img_2D
     return whole_img
 
-def export_img_vert_stit(layer_num,info_IO_path,img_path,img_save_path,img_name_format,img_name,channel_num,img_type,
-                         img_data_type,img_num):
+def export_img_vert_stit(layer_num,info_IO_path,file_path,file_name_format,img_save_path,img_name_format,img_name,
+                         channel_num,img_type,img_data_type,img_num):
     if img_data_type=='uint8':
         img_mode=cv2.IMREAD_GRAYSCALE
     elif img_data_type=='uint16':
@@ -165,6 +166,7 @@ def export_img_vert_stit(layer_num,info_IO_path,img_path,img_save_path,img_name_
         dim_elem_num, dim_len, voxel_len = get_img_npy_basic_info(i, info_IO_path)
         tile_pos, axis_range, first_last_index=get_img_info_vert_stit(i,info_IO_path)
         tile_num=tile_pos.shape[0]
+        img_path=os.path.join(file_path,file_name_format%(i))
         for j in range(first_last_index[0],first_last_index[1]):
             if channel_num == 1:
                 this_img = np.zeros((max_xy_voxel_num[1::-1]), dtype=img_data_type)
@@ -207,6 +209,34 @@ def export_img_vert_stit(layer_num,info_IO_path,img_path,img_save_path,img_name_
                 img_num += 1
     return img_num
 
+def export_img_vert_stit_merged(layer_num,info_IO_path,file_path,file_name_format,img_save_path,img_name_format,img_name,
+                                channel_num,img_type,img_data_type,img_num):
+    if img_data_type=='uint8':
+        img_mode=cv2.IMREAD_GRAYSCALE
+    elif img_data_type=='uint16':
+        img_mode=cv2.IMREAD_UNCHANGED
+    xy_axis_range,xy_voxel_num=calc_max_axis_range_vert_merged(layer_num,info_IO_path)
+    for i in range(layer_num):
+        img_path=os.path.join(file_path,file_name_format%(i))
+        dim_elem_num,axis_range,first_last_index=get_img_info_vert_stit_merged(i,info_IO_path)
+        for j in range(first_last_index[0],first_last_index[1]):
+            if channel_num==1:
+                this_img=np.zeros(xy_voxel_num[1::-1],dtype=img_data_type)
+                x_th,y_th=axis_range[0,0]-xy_axis_range[0,0],axis_range[1,0]-xy_axis_range[1,0]
+                img_2D=import_img_2D(img_name_format,img_path,img_name,j,0,img_type=img_type,
+                                     img_data_type=img_data_type,img_mode=img_mode)
+                this_img[y_th:y_th+dim_elem_num[1],x_th:x_th+dim_elem_num[0]]=img_2D
+                cv2.imwrite(r'%s\a%.4d.%s' % (img_save_path, img_num, img_type), this_img)
+                img_num += 1
+            if channel_num>1:
+                this_img = np.zeros(np.hstack((xy_voxel_num[1::-1], [3])), dtype=img_data_type)
+                x_th, y_th = axis_range[0, 0] - xy_axis_range[0, 0], axis_range[1, 0] - xy_axis_range[1, 0]
+                for c in range(channel_num):
+                    img2D=import_img_2D(img_name_format,img_path,img_name,j,c,img_type=img_type,
+                                        img_data_type=img_data_type,img_mode=img_mode)
+                    this_img[y_th:y_th+dim_elem_num[1],x_th:x_th+dim_elem_num[0],c]=img2D
+                cv2.imwrite(r'%s\a%.4d.%s' % (img_save_path, img_num, img_type), this_img)
+                img_num+=1
 
 
 def export_img_hori_stit(layer_num,info_IO_path,img_path,img_save_path,img_name_format,img_name,channel_num,img_type,

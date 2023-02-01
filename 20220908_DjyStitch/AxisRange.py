@@ -95,3 +95,13 @@ def calc_max_axis_range_vert(layer_num,save_path):
         axis_range_array[:, 3]) + voxel_len[0] * 2
     xy_voxel_num = np.int64(np.round((xy_axis_range[:, 1] - xy_axis_range[:, 0]) / voxel_len[0:2]) + 1)
     return xy_axis_range, xy_voxel_num
+
+def calc_max_axis_range_vert_merged(layer_num,save_path):
+    axis_range_array=np.zeros((layer_num,4),dtype='int64')
+    xy_axis_range=np.zeros((2,2),dtype='int64')
+    for i in range(layer_num):
+        axis_range_array[i,:]=np.load(save_path+r'\axis_range_zstitch_%.4d'%(i)).reshape((1,-1))
+    xy_axis_range[0,0],xy_axis_range[0,1]=np.min(axis_range_array[:,0]),np.max(axis_range_array[:,1])
+    xy_axis_range[1,0],xy_axis_range[1,1]=np.min(axis_range_array[:,2]),np.max(axis_range_array[:,3])
+    xy_voxel_num=np.uint32(xy_axis_range[:,1]-xy_axis_range[:,0])
+    return xy_axis_range,xy_voxel_num

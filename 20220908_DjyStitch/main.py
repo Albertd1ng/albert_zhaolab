@@ -1,7 +1,7 @@
 from HoriStitch import start_multi_stitchers
-from VertStitch import start_vertical_stitch
+from VertStitch import start_vertical_stitch,start_vertical_stit_merged
 from FileRename import rename_file,rename_file_tile_id,rename_file_Z_stit
-from ImgIO import export_img_vert_stit,export_img_hori_stit
+from ImgIO import export_img_vert_stit,export_img_hori_stit,export_img_vert_stit_merged
 
 import os
 import numpy as np
@@ -110,10 +110,10 @@ elif stitch_mode=='XY':
 elif stitch_mode == 'Z':
     # 文件路径
     file_path = r'D:\Albert\Data\20220909_Image'
+    # 图片文档命名格式
+    file_name_format = r'S%.4d'
     # 拼接后的图片保存路径
     img_save_path = r'D:\Albert\Data\S'
-    # 图像维度和位置信息文件类型。要放在图片给文档的MetaData文件夹中，与图片名一致
-    info_file_type = 'xml'  # {'xml', 'txt',...}
     # 需要拼接的层数
     layer_num = 10
     # 通道数
@@ -150,8 +150,6 @@ if __name__=='__main__':
     if stitch_mode=='XYZ':
         for i in range(0,layer_num+2):
             if 0<=i-2<layer_num-1:
-                img_path = os.path.join(file_path, file_name_format % (i-2))
-                info_file_path = os.path.join(img_path, 'MetaData', img_name + '.' + info_file_type)
                 vert_proc=Process(target=start_vertical_stitch,args=(
                     i - 2, img_name_format, img_path, info_IO_path, file_name_format, img_name,
                     channel_ordinal, img_file_type, img_data_type, overlap_ratio_vert, vert_step,
@@ -169,7 +167,7 @@ if __name__=='__main__':
                                   if_rename_file)
             if vert_proc!=None:
                 vert_proc.join()
-        export_img_vert_stit(layer_num, info_IO_path, img_path, img_save_path, img_name_format, img_name, channel_num,
+        export_img_vert_stit(layer_num, info_IO_path, file_path, file_name_format, img_save_path, img_name_format, img_name, channel_num,
                              img_file_type, img_data_type, 0)
 
     ####################################################################################################
@@ -186,7 +184,11 @@ if __name__=='__main__':
     ####################################################################################################
     if stitch_mode=='Z':
         for i in range(0,layer_num-1):
-            pass
+            start_vertical_stit_merged(i,img_name_format,img_path,info_IO_path,file_name_format,img_name,channel_ordinal,
+                                       img_file_type,img_data_type,overlap_ratio=overlap_ratio,vert_step=step,
+                                       pyr_down_times=pyr_down_times,if_median_blur=if_median_blur,blur_kernel_size=blur_kernel_size)
+        export_img_vert_stit_merged(layer_num,info_IO_path,file_path,file_name_format,img_save_path,img_name_format,
+                                    img_name,channel_num,img_file_type,img_data_type,0)
 
 
 

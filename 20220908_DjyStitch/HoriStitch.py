@@ -115,9 +115,10 @@ def calc_xyz_shift(i,index_j,border_list,path_format,img_path,img_name,channel_o
                 if this_loss<loss_min:
                     loss_min=this_loss
                     xv_shift,yv_shift,zv_shift=x,y,z
-    for x in range(xv_shift-step+1,xv_shift+step):
-        for y in range(yv_shift-step+1,yv_shift+step):
-            for z in range(zv_shift-step+1,zv_shift+step):
+    xv_shift1, yv_shift1, zv_shift1 = xv_shift, yv_shift, zv_shift
+    for x in range(xv_shift1-step+1,xv_shift1+step):
+        for y in range(yv_shift1-step+1,yv_shift1+step):
+            for z in range(zv_shift1-step+1,zv_shift1+step):
                 border_list_shift=[]
                 ovl1_list=[]
                 ovl2_list=[]
